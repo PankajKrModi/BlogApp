@@ -1,0 +1,118 @@
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!--<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">-->
+    <link rel="stylesheet" href="{% static 'css/customcss/main.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.9&appId=462199294128934';
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+        <div class="col-md-4">
+            <h3>Blogs </h3>
+            <div id="subscribe">
+                <!--<a href="{% url 'blog:post_feed' %}" target="_blank">-->
+                <img src="{% static 'image/feed_icon.png' %}" alt="Subscribe to RSS Feed"
+                     style="width:30px;height:30px">
+                <span style="text-decoration:none;border:none;cursor:pointer;">Subscribe to posts</span><br>
+
+            </div>
+            <div id="subscribeForm">
+                    <form id="faram" action="{% url 'blog:post_list_view' %}" method="POST">{% csrf_token %}
+                        <label for="email_type" >Email:</label>
+                        <input type="email" name="email" id="email_type" placeholder="enter email to subscribe" required>
+                        <button type="submit" value="Click">Submit</button>
+                    </form>
+                </div>
+            <button id="writeButton" type="submit" value="Click" >Write Blog</button>
+        </div>
+        <div id="fb-root"></div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(function() {
+
+  $("#subscribe").click(function() {
+    $("#subscribeForm").fadeToggle();
+  });
+
+  $(document).mouseup(function(e) {
+    var container = $("#subscribeForm");
+    //$("#form2 input").val('Hello World!');
+    if (
+      !container.is(e.target) &&
+      container.has(e.target).length === 0
+    ) {
+      container.fadeOut();
+    }
+  });
+});
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src=" http://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js "></script>
+<script>
+$(document).ready(function(){
+    var csrftoken = $.cookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("#faram").submit(function(e) {
+    var form = $(this);
+    var url = form.attr('action');
+
+    $.ajax({
+           type: "POST",
+           url: "/blog/subscribe/",
+           data: form.serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               console.log(data, data["status"]);
+               if (data["status"] == "ok") {
+                alert("Subscribed Successfully");
+               }
+               else{
+                alert(data["message"]);
+               }
+           }
+         });
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
+
+});
+</script>
+
+</body>
+</html>

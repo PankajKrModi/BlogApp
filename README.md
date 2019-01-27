@@ -1,1 +1,2 @@
 # BlogApp
+Built in Django

@@ -3,10 +3,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
 import re
 
-from blog.forms import SubscribeForm
+from .forms import SubscribeForm
 from .models import Post, Subscribe
-from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import JsonResponse
 
 
 @require_POST
